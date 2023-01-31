@@ -1,14 +1,14 @@
 const bodyParser = require('body-parser');
 const express = require('express')
-const noteModel = require('./note')
-const MongoDB = require('./services/databaseService');
+const noteModel = require('../note')
+const MongoDB = require('../services/databaseService');
 const async = require('async')
 const cors = require('cors');
-const usermodel = require('./usermodel');
+const usermodel = require('../usermodel');
 const JWT = require('jsonwebtoken')
 const secretKey = process.env.JWT_SECRET
 const cookieParser = require('cookie-parser');
-const verify = require('./services/authService');
+const verify = require('../services/authService');
 
 
 const app = express()

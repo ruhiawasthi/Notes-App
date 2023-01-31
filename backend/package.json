@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: please specify your test\" && exit 1",
-    "run": "node index.js"
+    "run": "node functions/index.js",
+    "build": "netlify deploy --prod"
   },
+
   "author": "",
   "license": "ISC",
   "dependencies": {
