@@ -9,11 +9,19 @@ const JWT = require('jsonwebtoken')
 const secretKey = process.env.JWT_SECRET
 const cookieParser = require('cookie-parser');
 const verify = require('./services/authService');
+const bcrypt = require('bcrypt');
+
 
 
 const app = express()
 const port = 4000
-app.use(cors());
+
+const corsOptions ={
+  origin: 'http://localhost:3000',
+  credentials:true,
+  optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,142 +32,10 @@ app.use(express.json());
 
 MongoDB.start()
 
-//API TEST
-//add of 2 no
 
-app.post('/Add', function (req, res) {
-  var first = parseInt(req.body.firstNumber);
-  var second = parseInt(req.body.lastNumber);
-  var sum = (first + second);
-  res.send('The sum is: ' + (sum));
-});
-
-// using async 
-
-app.post('/math', function (req, res) {
-  var key = req.body.key;
-  async.auto({
-    add: function (cb) {
-      if (key != "add") {
-        return cb(null, false);
-      }
-      var first = parseInt(req.body.firstNumber);
-      var second = parseInt(req.body.lastNumber);
-      var sum = (first + second);
-      return cb(null, sum);
-    },
-
-    sub: function (cb) {
-      if (key != "sub") {
-        return cb(null, false);
-      }
-      var first = parseInt(req.body.firstNumber);
-      var second = parseInt(req.body.lastNumber);
-      var sum = (first - second);
-      return cb(null, sum);
-    },
-
-    mul: function (cb) {
-      if (key != "mul") {
-        return cb(null, false);
-      }
-      var first = parseInt(req.body.firstNumber);
-      var second = parseInt(req.body.lastNumber);
-      var sum = (first * second);
-      return cb(null, sum);
-    },
-
-    areaSquare: function (cb) {
-
-      if (key != "areaSquare") {
-        return cb(null, false);
-      }
-      var first = parseInt(req.body.firstNumber);
-      var sum = (first * first);
-      return cb(null, sum);
-    },
-
-    areaCircule: function (cb) {
-      if (key != "areaCircule") {
-        return cb(null, false);
-      }
-      var first = parseInt(req.body.firstNumber);
-      var sum = (3.14 * first * first);
-      return cb(null, sum);
-    },
-
-    square: function (cb) {
-      if (key != "square") {
-        return cb(null, false);
-      }
-      var first = parseInt(req.body.firstNumber);
-      var sum = (first * first);
-      return cb(null, sum);
-    },
-
-
-    squareRoot: function (cb) {
-      if (key != "squareRoot") {
-        return cb(null, false);
-      }
-      var first = parseInt(req.body.firstNumber);
-      var sum = (Math.sqrt(first));
-      return cb(null, sum);
-    },
-
-
-  },
-
-
-    function (err, results) {
-      if (err) {
-        return res.status(403).json({ error: err });
-      }
-      return res.json({ results: results[key] });
-    }
-  )
-
-
-});
-/*
-// test this & and practise more
-get('./get', function(req, res){
-  async.auto({
-    add:function (cb) {
-      var first = res.body.firstelement;
-      var second = res.body.secondelement;
-      return cb(first+second);
-      
-    }
-  },
-   function(err, results)
-   {
-       if(err)
-       {
-        console.log("unable to add");
-       }
-       else
-
-       {
-        res.send(results);
-       }
-   },
-  );
-});
-*/
-
-
-// created local db db.json
-app.get('/mynotes', (req, res) => {
-  res.json(
-    {
-      "results": db.notes
-    })
-})
 // JWT
-
 //New user registration
-app.post('/addNewUser', async (req, res) => {
+app.post('api/v1/addNewUser', async (req, res) => {
   const data = new usermodel({
     user: req.body.user,
     password: req.body.password,
@@ -172,7 +48,7 @@ app.post('/addNewUser', async (req, res) => {
 })
 
 
-app.get('/newUser', (req, res) => {
+app.get('api/v1/newUser', (req, res) => {
   async.auto(
     {
       notes: function (cb) {
@@ -195,20 +71,7 @@ app.get('/newUser', (req, res) => {
         });
       },
     },
-    /*
-      combine: ['user', 'notes' ,  function(results, cb){
-       return  results.notes.concat(results.user);
-      },],
-  
-      function (err, results){
-      // if (err) {
-      //   // console.log("unable to catch error ")
-      //   return res.status(403).json({ error: err });
-      // }
-      return res.json({ results: results.notes });
-    },
-    });
-    */
+
     function (err, results) {
       if (err) {
         return res.status(403).json({ error: err });
@@ -222,8 +85,8 @@ app.get('/newUser', (req, res) => {
 });
 
 // signup
-
-app.post('/signup', (req, res) => {
+app.post('api/v1/signup', (req, res) => {
+  
   async.auto(
     {
       users: function (cb) {
@@ -251,8 +114,9 @@ app.post('/signup', (req, res) => {
   );
 });
 
+
 //login
-app.post('/login', (req, res) => {
+app.post('api/v1/login', (req, res) => {
   async.auto(
     {
       users: function (cb) {
@@ -261,12 +125,12 @@ app.post('/login', (req, res) => {
           if (err) {
             return cb("Unable to login.");
           }
-          try{
-            var token = JWT.sign({ email: user.email, password: user.password }, secretKey)   
-            return cb(null, token )    
+          try {
+            var token = JWT.sign({ email: user.email, password: user.password }, secretKey)
+            return cb(null, token)
           }
-          catch(err){
-             return cb(null, false)
+          catch (err) {
+            return cb(null, false)
           }
         }
 
@@ -277,51 +141,21 @@ app.post('/login', (req, res) => {
       if (err) {
         return res.status(403).json({ error: err });
       }
-      if (!results.users) { return res.json({ results: "unable to login" }) }
-      res.cookie("authToken", results.users ,{httpOnly: true, expires:new Date(Date.now()+60*1000*60*24)}).send(" succesfully logged in")
+      if (!results.users) { return res.status(403).json({ results: "unable to login" }) }
+      res.cookie("authToken", results.users, { httpOnly: true, expires: new Date(Date.now() + 60 * 1000 * 60 * 24) }).send(" succesfully logged in")
     }
   );
 });
 
 
 //logout
-
-app.get('/logout', (req, res) => {
-  res.cookie("authToken", "" ,{httpOnly: true}).send("Logged out!");
+app.get('api/v1/logout', (req, res) => {
+  res.cookie("authToken", "", { httpOnly: true }).send("Logged out!");
 });
 
 
-
-
-/*
-//register
-app.post('/register', (req, res) => {
-  async.auto(
-    { createUser: 'addAB', function(a){   
-        usermodel.create({
-        email:req.body.email,
-          password:req.body.password}, 
-         (err, user) => {
-          if(err){
-            return cb("unable to add user");
-          }
-          return a(null,user);
-        });
-      },
-
-     function (err, results) {
-      if (err) {
-        return res.status(403).json({ error: err });
-      }
-      return res.json({ results: results.createUser });
-    },
-    };
-  
-  });
-*/
-
 //fetching from cloud
-app.get('/newnote', (req, res) => {
+app.get('/newnote', verify,(req, res) => {
   async.auto({
     notes: function (cb) {
       noteModel.find().exec(function (err, notes) {
@@ -340,8 +174,101 @@ app.get('/newnote', (req, res) => {
   });
 });
 
+// testing login
+/*
+app.post('/login', (req, res) => {
+  const password = req.body.password;
+  async.auto(
+    {     
+      users: function (cb) {
+        usermodel.findOne({ email: req.body.email}, (err, user) => {
+
+          if (err) {
+            return cb(err);
+          }
+          if (!user || !user.authToken) {
+            return cb("Unable to find user token.");
+          }
+
+          return(null, user);
+        });
+      },
+      checkPassword:['users',function(results, cb){
+        bcrypt.compare(password, results.users.password).then((result) =>{
+          
+            if(result){
+              try {
+                   var token = JWT.sign({ email: results.users.email, password: results.users.password }, secretKey)
+                   return cb(null, token)
+              }
+              catch (err) {
+                   return cb(null, false)
+              }
+               return cb("Invalid credentials");
+            }
+            return cb("Invalid credentials");         
+      });
+
+      }],
+    },
+    function (err, results) {
+      if (err) {
+        return res.status(403).json({ error: err });
+      }
+      if (!results.users) { 
+        return res.status(403).json({ results: "unable to login" }) 
+      }
+
+      res.cookie("authToken", results.checkPassword, { httpOnly: true, expires: new Date(Date.now() + 60 * 1000 * 60 * 24) }).send(" Succesfully logged in.");
+    });
+});
+
+//Testing hash in signup
+
+app.post('/signup', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
 
 
+  async.auto({
+    hashedPassword: function (cb) {
+       bcrypt.genSalt(10, function (err, salt) {
+          bcrypt.hash(password, salt, function (err, hash) {
+             if (err) {
+               return cb(err);
+              }
+              console.log("hash", hash);
+              return cb(null, hash);       
+            });
+        })
+
+    },
+    users: ['hashedPassword', function (results, cb) {
+      var userData = { email: req.body.email, password: results.hashedPassword }
+      userData.authToken = JWT.sign(userData, secretKey)
+
+      usermodel.create(userData, (err, user) => {
+        if (err) {
+          return cb("Unable to signup.");
+        }
+        console.log(user)
+        return cb(null, user);
+      }
+
+      );
+    }],
+  },
+    function (err, results) {
+      if (err) {
+        return res.status(403).json({ error: err });
+      }
+      return res.json({ results: results.users });
+
+    }
+  );
+});
+
+*/
 
 //post api for mongodb ->inserting data
 app.post("/newnotePost", async (req, res) => {
