@@ -3,7 +3,7 @@ import axios from '../Api.js';
 import { useNavigate } from 'react-router-dom';
 
 function SignupPage() {
-  
+  //states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPass, setconfirmPass] = useState();
@@ -17,7 +17,7 @@ function SignupPage() {
       return;
     }
     else {
-      axios.post("http://localhost:4000/Signup",
+      axios.post("/Signup",
         {
           email: email,
           password: password,
@@ -34,8 +34,6 @@ function SignupPage() {
         })
     }
   }
-
-
 
   return (
     <>

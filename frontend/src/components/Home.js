@@ -16,7 +16,7 @@ function Home() {
 
     function getALLNotes() {
       
-        axios.get('http://localhost:4000/newnote', {withCredentials:true})
+        axios.get('/newnote', {withCredentials:true})
         .then(
             (response) => {
                 setNotes(response.data.results)
@@ -27,10 +27,7 @@ function Home() {
             console.log(err);
             navigate('/login')
 
-        })
-        
-
-        
+        })     
     }
 
     useEffect(() => {
@@ -48,12 +45,11 @@ function Home() {
 
 
     function saveNote() {
-        axios.post('http://localhost:4000/newnotePost', {
+        axios.post('/newnotePost', {
             description: description,
             title: title
         },)
             .then((response) => {
-                // setNotes(response.data.results);
                   getALLNotes()
             });
 

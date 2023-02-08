@@ -12,7 +12,7 @@ function LoginPage() {
   function loginFun(e) {
     e.preventDefault();
 
-    axios.post("http://localhost:4000/login",
+    axios.post("/login",
       {
         email: email,
         password: password,

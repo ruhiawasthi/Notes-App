@@ -5,7 +5,7 @@ export default function NavBar(props) {
     const navigate = useNavigate();
     function logoutPage (e){
         e.preventDefault();
-        axios.get('http://localhost:4000/logout', {withCredentials:true}).then(
+        axios.get('/logout', {withCredentials:true}).then(
            (response) => {
                if (response.status === 200) {
                  document.cookie = "authToken=; expires=Thu, 18 Dec 2013 12:00:00 UTC; path=/";
