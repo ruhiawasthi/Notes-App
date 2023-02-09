@@ -42,10 +42,10 @@ function Home() {
 
 
     function saveNote() {
-        axios.post('/newnotePost', {
+        axios.post('/newnotePost' , {
             description: description,
             title: title
-        },)
+        }, {withCredentials:true})
             .then((response) => {
                   getALLNotes()
             });
