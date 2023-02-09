@@ -21,7 +21,6 @@ export default function NavBar(props) {
             <nav>
                 <ul>
                     <li>
-
                         <a href="#"> Home </a>
                     </li>
                     <li>

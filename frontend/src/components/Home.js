@@ -3,7 +3,6 @@ import Note from './Note';
 import './Home.css';
 import axios from '../Api.js';
 import { useNavigate } from 'react-router-dom';
-
 import React, { useState, useEffect } from 'react';
 
 function Home() {
@@ -19,14 +18,12 @@ function Home() {
         axios.get('/newnote', {withCredentials:true})
         .then(
             (response) => {
-                setNotes(response.data.results)
+              setNotes(response.data.results)
             }
         )
         .catch((err)=>
         {
-            console.log(err);
-            // navigate('/login')
-
+          console.log(err);
         })     
     }
 
@@ -53,7 +50,7 @@ function Home() {
                   getALLNotes()
             });
 
-        setShowModal(false);
+      setShowModal(false);
     }
     return (
         <div className="App">
@@ -82,7 +79,6 @@ function Home() {
                       <h2 style={{ color: "#031218", margin: "10px" }}>
                         Create a new note
                       </h2>
-                      {/* <AiFillCloseCircle style={{color: "#031218", margin: "10px"}} onClick={closeModal}/> */}
                     </div>
                     <div className="row">
                       <h4 style={{ color: "#031218", margin: "10px" }}>Title</h4>
@@ -145,7 +141,6 @@ function Home() {
         </div>
       );
     }
-
 
 export default Home;
 

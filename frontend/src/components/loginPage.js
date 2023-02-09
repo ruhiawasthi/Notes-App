@@ -44,7 +44,6 @@ function LoginPage() {
             <label>Password </label>
           </div>
           <div class="pass">Forgot Password?</div>
-          {/* <input type="submit" value="Login"></input> */}
           <button onClick={loginFun}> Login </button>
           <div class="signup_link">
             Not a member? <a href="/signup">Signup</a>
