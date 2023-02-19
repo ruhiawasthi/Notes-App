@@ -19,7 +19,8 @@ function LoginPage() {
       },{withCredentials:true})
       .then((response) => {
         if (response.status === 200) {
-          navigate('/');
+          localStorage.setItem("user", email);
+          navigate('/', );
         }
       })
       .catch((err) => {

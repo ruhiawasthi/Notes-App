@@ -15,7 +15,7 @@ function Home() {
 
     function getALLNotes() {
       
-        axios.get('/newnote', {withCredentials:true})
+        axios.get('/newnote?user='+localStorage.getItem("user"), {withCredentials:true})
         .then(
             (response) => {
               setNotes(response.data.results)
@@ -29,7 +29,7 @@ function Home() {
 
     useEffect(() => {
         getALLNotes()
-
+       
     }, []);
 
    
@@ -44,7 +44,8 @@ function Home() {
     function saveNote() {
         axios.post('/newnotePost' , {
             description: description,
-            title: title
+            title: title,
+            user:localStorage.getItem("user")
         }, {withCredentials:true})
             .then((response) => {
                   getALLNotes()
